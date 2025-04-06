@@ -10,6 +10,9 @@ class Friends(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="users"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class Profile(models.Model):
