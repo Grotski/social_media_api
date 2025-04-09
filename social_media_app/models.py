@@ -12,8 +12,14 @@ class Chat(models.Model):
     receiver = models.ForeignKey(
         "Profile", on_delete=models.CASCADE, related_name="chats_received"
     )
-    content = models.TextField(max_length=1000)
+    content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"timestamp: {self.created_at} from {self.sender} to {self.receiver}: {self.content}"
 
 
 def image_path(instance, filename: str):
@@ -71,7 +77,7 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    date_of_bith = models.DateField(auto_now_add=True)
+    date_of_birth = models.DateField(auto_now_add=True)
     bio = models.TextField(max_length=1000)
     profile_picture = models.ImageField(null=True, upload_to=image_path)
 
@@ -79,7 +85,7 @@ class Profile(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
-        return f"{self.full_name}, {self.date_of_bith}, {self.bio}"
+        return f"{self.full_name}, {self.date_of_birth}, {self.bio}"
 
     class Meta:
         ordering = ["first_name", "last_name"]
