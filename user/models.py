@@ -9,6 +9,7 @@ from django.utils.translation import gettext as _
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
 
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username",]
 
     objects = UserManager()

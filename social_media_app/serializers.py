@@ -109,13 +109,18 @@ class PostImageSerializer(PostSerializer):
         fields = ["id", "media"]
 
 
-class ProfileListSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["id", "first_name", "last_name", "date_of_birth", "bio"]
+
+class ProfileListSerializer(ProfileSerializer):
     class Meta:
         model = Profile
         fields = ["id", "first_name", "last_name"]
 
 
-class ProfileDetailSerializer(ProfileListSerializer):
+class ProfileDetailSerializer(ProfileSerializer):
     class Meta:
         model = Profile
         fields = [
