@@ -30,6 +30,17 @@ class FriendsListSerializer(serializers.ModelSerializer):
         ]
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "post", "content"]
+        read_only_fields = ["id"]
+    
+    def create(self, validated_data):
+        validated_data["commenter"] = self.context["request"].user
+        return Comment.objects.create(**validated_data)
+
+
 class CommentListSerializer(serializers.ModelSerializer):
     post_title = serializers.SlugRelatedField(read_only=True, slug_field="title")
     commenter_username = serializers.SlugRelatedField(
@@ -42,7 +53,6 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 
 class CommentDetailSerializer(CommentListSerializer):
-    post_title = serializers.SlugRelatedField(read_only=True, slug_field="title")
     post_content = serializers.SlugRelatedField(read_only=True, slug_field="content")
     commenter_first_name = serializers.SlugRelatedField(
         read_only=True, slug_field="first_name"
@@ -78,7 +88,7 @@ class PostListSerializer(PostSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "title", "profile_full_name", "ceated_at"]
+        fields = ["id", "title", "profile_full_name", "media", "ceated_at"]
 
 
 class PostDetailSerializer(PostSerializer):
@@ -112,12 +122,12 @@ class PostImageSerializer(PostSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["id", "first_name", "last_name", "date_of_birth", "bio"]
+        fields = ["id", "first_name", "last_name"]
 
 class ProfileListSerializer(ProfileSerializer):
     class Meta:
         model = Profile
-        fields = ["id", "first_name", "last_name"]
+        fields = ["id", "profile_picture", "first_name", "last_name", "date_of_birth", "bio"]
 
 
 class ProfileDetailSerializer(ProfileSerializer):
