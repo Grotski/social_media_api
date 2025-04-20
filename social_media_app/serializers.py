@@ -1,4 +1,4 @@
-from social_media_app.models import Post, Profile, Comment, Chat, Friend
+from social_media_app.models import Post, Profile, Comment, Chat, Follow
 from rest_framework import serializers
 
 
@@ -8,23 +8,19 @@ class ChatListSerializer(serializers.ModelSerializer):
         fields = ["id", "sender", "receiver", "content", "created_at"]
 
 
-class FriendListSerializer(serializers.ModelSerializer):
-    profile_username = serializers.SlugRelatedField(
-        read_only=True, slug_field="username"
-    )
-    followed_username = serializers.SlugRelatedField(
-        read_only=True, slug_field="username"
+class FollowListSerializer(serializers.ModelSerializer):
+    follower_username = serializers.SlugRelatedField(
+        read_only=True, slug_field="user__username"
     )
     following_username = serializers.SlugRelatedField(
-        read_only=True, slug_field="username"
+        read_only=True, slug_field="user__username"
     )
 
     class Meta:
-        model = Friend
+        model = Follow
         fields = [
             "id",
-            "profile_username",
-            "followed_username",
+            "follower_username",
             "following_username",
             "created_at",
         ]

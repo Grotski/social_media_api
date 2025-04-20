@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .mixins import UploadImageMixin
 
-from .models import Profile, Post, Comment, Chat, Friend
+from .models import Profile, Post, Comment, Chat, Follow
 
 from .serializers import (
     ProfileListSerializer,
@@ -20,23 +20,24 @@ from .serializers import (
     CommentListSerializer,
     CommentDetailSerializer,
     ChatListSerializer,
-    FriendListSerializer,
+    FollowListSerializer,
 )
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
-class FriendViewSet(viewsets.ModelViewSet):
-    queryset = Friend.objects.all()
-    serializer_class = FriendListSerializer
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowListSerializer
     permission_classes = [
         IsAdminOrIfAuthenticatedReadOnly,
     ]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return FriendListSerializer
-        return FriendListSerializer
+            return FollowListSerializer
+        return FollowListSerializer
+        
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -124,3 +125,19 @@ class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):
         if self.action == "upload_image":
             return ProfileImageSerializer
         return ProfileDetailSerializer
+
+    @action(deltaile=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    def toggle_follow_unfollow(self, request, pk=None):
+        profile_to_follow = Profile.objects.get(pk=pk)
+        follower_profile = request.user.profile
+        
+        if profile_to_follow == follower_profile:
+            return Response({"status": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if follower_profile.followings.filter(pk=profile_to_follow.pk).exists():
+            follower_profile.followings.remove(profile_to_follow)
+            status_msg = "unfollowed"
+        else:
+            follower_profile.followings.add(profile_to_follow)
+            status_msg = "followed"
+        return Response({"status": status_msg}, status=status.HTTP_200_OK)

@@ -61,20 +61,21 @@ class Post(models.Model):
         ordering = ["title"]
 
 
-class Friend(models.Model):
-    profile = models.ForeignKey(
-        "Profile", on_delete=models.CASCADE, related_name="friends"
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        "Profile", related_name="followers"
     )
-    followed = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="followers"
-    )
-    following = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="followings"
+    following = models.ForeignKey(
+        "Profile", related_name="followings"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        unique_together = ["followed", "following"]
         ordering = ["-created_at"]
+        
+    def __str__(self):
+        return f"{self.follower} follows {self.following}"
 
 
 class Profile(models.Model):
@@ -84,6 +85,7 @@ class Profile(models.Model):
     date_of_birth = models.DateField(auto_now_add=True)
     bio = models.TextField(max_length=1000)
     profile_picture = models.ImageField(null=True, upload_to=image_path)
+    followers = models.ManyToManyField("self", through=Follow, symmetrical=False)
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
