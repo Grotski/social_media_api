@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .mixins import UploadImageMixin
 
-from .models import Profile, Post, Comment, Chat, Friends
+from .models import Profile, Post, Comment, Chat, Friend
 
 from .serializers import (
     ProfileListSerializer,
@@ -20,23 +20,23 @@ from .serializers import (
     CommentListSerializer,
     CommentDetailSerializer,
     ChatListSerializer,
-    FriendsListSerializer,
+    FriendListSerializer,
 )
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
-class FriendsViewSet(viewsets.ModelViewSet):
-    queryset = Friends.objects.all()
-    serializer_class = FriendsListSerializer
+class FriendViewSet(viewsets.ModelViewSet):
+    queryset = Friend.objects.all()
+    serializer_class = FriendListSerializer
     permission_classes = [
         IsAdminOrIfAuthenticatedReadOnly,
     ]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return FriendsListSerializer
-        return FriendsListSerializer
+            return FriendListSerializer
+        return FriendListSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -81,6 +81,17 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
         if self.action == "upload_image":
             return PostImageSerializer
         return PostDetailSerializer
+    
+    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    def toggle_like_unlike(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        if post.likes.filter(pk=user.pk).exists():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        return Response(status=status.HTTP_200_OK)
+
 
 
 class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):

@@ -1,4 +1,4 @@
-from social_media_app.models import Post, Profile, Comment, Chat, Friends
+from social_media_app.models import Post, Profile, Comment, Chat, Friend
 from rest_framework import serializers
 
 
@@ -8,7 +8,7 @@ class ChatListSerializer(serializers.ModelSerializer):
         fields = ["id", "sender", "receiver", "content", "created_at"]
 
 
-class FriendsListSerializer(serializers.ModelSerializer):
+class FriendListSerializer(serializers.ModelSerializer):
     profile_username = serializers.SlugRelatedField(
         read_only=True, slug_field="username"
     )
@@ -20,7 +20,7 @@ class FriendsListSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Friends
+        model = Friend
         fields = [
             "id",
             "profile_username",
@@ -35,7 +35,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["id", "post", "content"]
         read_only_fields = ["id"]
-    
+
     def create(self, validated_data):
         validated_data["commenter"] = self.context["request"].user
         return Comment.objects.create(**validated_data)
@@ -76,6 +76,13 @@ class CommentDetailSerializer(CommentListSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    total_likes = serializers.IntegerField(source="total_likes", read_only=True)
+    liked_by_user = serializers.SerializerMethodField()
+
+    def get_liked_by_user(self, obj):
+        user = self.context["request"].user
+        return obj.likes.filter(pk=user.pk).exists()
+
     class Meta:
         model = Post
         fields = ["id", "title", "content", "profile", "created_at"]
@@ -105,6 +112,7 @@ class PostDetailSerializer(PostSerializer):
             "id",
             "title",
             "content",
+            "total_likes",
             "profile_username",
             "profile_full_name",
             "media",
@@ -124,10 +132,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ["id", "first_name", "last_name"]
 
+
 class ProfileListSerializer(ProfileSerializer):
     class Meta:
         model = Profile
-        fields = ["id", "profile_picture", "first_name", "last_name", "date_of_birth", "bio"]
+        fields = [
+            "id",
+            "profile_picture",
+            "first_name",
+            "last_name",
+            "date_of_birth",
+            "bio",
+        ]
 
 
 class ProfileDetailSerializer(ProfileSerializer):

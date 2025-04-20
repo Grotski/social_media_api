@@ -18,4 +18,4 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ["post", "content", "commenter"]
 
 admin.site.register(Chat)
-admin.site.register(Friends)
+admin.site.register(Friend)
