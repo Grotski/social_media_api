@@ -8,6 +8,7 @@ router.register("profiles", ProfileViewSet)
 router.register("posts", PostViewSet)
 router.register("comments", CommentViewSet)
 router.register("friends", FollowViewSet)
+router.register("follows", FollowViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

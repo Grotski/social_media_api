@@ -37,7 +37,6 @@ class FollowViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return FollowListSerializer
         return FollowListSerializer
-        
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -82,7 +81,7 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
         if self.action == "upload_image":
             return PostImageSerializer
         return PostDetailSerializer
-    
+
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
     def toggle_like_unlike(self, request, pk=None):
         post = self.get_object()
@@ -92,7 +91,6 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
         else:
             post.likes.add(user)
         return Response(status=status.HTTP_200_OK)
-
 
 
 class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):
@@ -126,14 +124,17 @@ class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):
             return ProfileImageSerializer
         return ProfileDetailSerializer
 
-    @action(deltaile=True, methods=["POST"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
     def toggle_follow_unfollow(self, request, pk=None):
         profile_to_follow = Profile.objects.get(pk=pk)
         follower_profile = request.user.profile
-        
+
         if profile_to_follow == follower_profile:
-            return Response({"status": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {"status": "You cannot follow yourself"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if follower_profile.followings.filter(pk=profile_to_follow.pk).exists():
             follower_profile.followings.remove(profile_to_follow)
             status_msg = "unfollowed"
@@ -141,3 +142,17 @@ class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):
             follower_profile.followings.add(profile_to_follow)
             status_msg = "followed"
         return Response({"status": status_msg}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
+    def followers(self, request, pk=None):
+        profile = self.get_object()
+        followers = Follow.objects.filter(follower=profile)
+        serializer = FollowListSerializer(followers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
+    def followings(self, request, pk=None):
+        profile = self.get_object()
+        followings = Follow.objects.filter(following=profile)
+        serializer = FollowListSerializer(followings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
