@@ -1,11 +1,11 @@
-from social_media_app.models import Post, Profile, Comment, Chat, Follow
+from social_media_app.models import Post, Profile, Comment, Message, Follow
 from rest_framework import serializers
 
 
-class ChatListSerializer(serializers.ModelSerializer):
+class MessageListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Chat
-        fields = ["id", "sender", "receiver", "content", "created_at"]
+        model = Message
+        fields = ["id", "content", "created_at"]
 
 
 class FollowListSerializer(serializers.ModelSerializer):

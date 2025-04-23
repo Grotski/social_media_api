@@ -5,13 +5,7 @@ from django.db import models
 from social_media_api_project import settings
 
 
-class Chat(models.Model):
-    sender = models.ForeignKey(
-        "Profile", on_delete=models.CASCADE, related_name="chats_sent"
-    )
-    receiver = models.ForeignKey(
-        "Profile", on_delete=models.CASCADE, related_name="chats_received"
-    )
+class Message(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

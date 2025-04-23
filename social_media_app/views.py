@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .mixins import UploadImageMixin
 
-from .models import Profile, Post, Comment, Chat, Follow
+from .models import Profile, Post, Comment, Message, Follow
 
 from .serializers import (
     ProfileListSerializer,
@@ -19,7 +19,6 @@ from .serializers import (
     CommentSerializer,
     CommentListSerializer,
     CommentDetailSerializer,
-    ChatListSerializer,
     FollowListSerializer,
 )
 

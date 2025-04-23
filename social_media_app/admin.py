@@ -17,5 +17,5 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ["post", "content", "commenter", "created_at", "updated_at"]
     search_fields = ["post", "content", "commenter"]
 
-admin.site.register(Chat)
+admin.site.register(Message)
 admin.site.register(Follow)
