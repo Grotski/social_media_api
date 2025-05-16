@@ -11,11 +11,11 @@
             {% csrf_token %}
 
             <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="{{ form.username.id_for_label }}" class="sr-only">Username</label>
-                    <input id="{{ form.username.id_for_label }}" type="text" name="{{ form.username.name }}" required
+                <div class="mt-4">
+                    <label for="{{ form.email.id_for_label }}" class="sr-only">Email</label>
+                    <input id="{{ form.email.id_for_label }}" type="email" name="{{ form.email.name }}" required
                         class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                        placeholder="Username">
+                        placeholder="Email">
                 </div>
                 <div class="mt-4">
                     <label for="{{ form.password.id_for_label }}" class="sr-only">Password</label>

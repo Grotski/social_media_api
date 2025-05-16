@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from user.serializers import UserSerializer
-from user.forms import UserCreationForm, UserLogInForm
+from user.forms import UserRegisterForm, UserLogInForm
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -13,7 +13,7 @@ class CreateUserView(generics.CreateAPIView):
 
     @action(detail=False, methods=["get"])
     def get(self, request):
-        form = UserCreationForm()
+        form = UserRegisterForm()
         return render(request, "register.html", {"form": form})
 
 
