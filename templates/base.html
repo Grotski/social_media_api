@@ -1,0 +1,17 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Chat App{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        {% if user.is_authenticated %}
+            <p>Hi, {{ user.username }} | <a href="/logout/">Logout</a></p>
+        {% else %}
+            <a href="{% url 'login'%}">Login</a> | <a href="register/">Register</a>
+        {% endif %}
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

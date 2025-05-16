@@ -2,7 +2,7 @@ from django.contrib import admin
 from social_media_app.models import *
 
 
-@admin.registe(Profile)
+@admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ["first_name", "last_name", "date_of_birth", "bio"]
     search_fields = ["first_name", "last_name"]

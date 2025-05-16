@@ -57,15 +57,15 @@ class Post(models.Model):
 
 class Follow(models.Model):
     follower = models.ForeignKey(
-        "Profile", related_name="followers"
+        "Profile", related_name="followers", on_delete=models.CASCADE
     )
     following = models.ForeignKey(
-        "Profile", related_name="followings"
+        "Profile", related_name="followings", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ["followed", "following"]
+        unique_together = ["follower", "following"]
         ordering = ["-created_at"]
         
     def __str__(self):
@@ -79,7 +79,7 @@ class Profile(models.Model):
     date_of_birth = models.DateField(auto_now_add=True)
     bio = models.TextField(max_length=1000)
     profile_picture = models.ImageField(null=True, upload_to=image_path)
-    followers = models.ManyToManyField("self", through=Follow, symmetrical=False)
+    profile_followers = models.ManyToManyField("self", through=Follow, symmetrical=False)
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"

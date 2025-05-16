@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Chat{% endblock %}
+{% block content %}
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+<div class="h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="chat-container bg-white max-w-xl mx-auto rounded-lg shadow-md overflow-hidden">
+
+
+        <div class="chat-header bg-blue-600 text-white p-4">
+            {{recipient_username}}
+        </div>
+
+        <div class="chat-messages h-96 overflow-y-auto p-4" id="chat-box">
+        </div>
+
+
+        <div class="border-t border-gray-200 p-4">
+            <input type="text"
+                class="chat-input w-full px-4 py-2 rounded-md border focus:ring-indigo-500 focus:border-indigo-500"
+                id="chat-input" placeholder="Type your message..." />
+        </div>
+    </div>
+</div>
+
+<script>
+    const username = "{{ recipient_username }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + username + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data['message'];
+        const sender = data['sender'];
+        const chatBox = document.getElementById('chat-box');
+        const messageElement = document.createElement('div');
+        const messageContent = document.createElement('span');
+
+        if (sender === "{{ request.user.username }}") {
+
+            messageElement.classList.add('mb-2', 'flex', 'justify-end');
+            messageContent.classList.add('p-3', 'rounded-md', 'bg-indigo-600', 'text-white');
+        } else {
+
+            messageElement.classList.add('mb-2', 'flex', 'justify-start');
+            messageContent.classList.add('p-3', 'rounded-md', 'bg-gray-300', 'text-gray-900');
+        }
+   
+        messageContent.textContent = `[${sender}]: ${message}`;
+        messageElement.appendChild(messageContent);
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    document.querySelector('#chat-message-submit').addEventListener('keyup', function (e) {
+        if (e.key === 'Enter') {
+            const messageInput = document.querySelector('#chat-message-submit');
+            const message = messageInput.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInput.value = '';
+        }
+    });
+</script>
+{%endblock%}

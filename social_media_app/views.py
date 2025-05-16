@@ -44,6 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAdminOrIfAuthenticatedReadOnly,
     ]
+    
 
     def get_serializer_class(self):
         if self.action == "list":
