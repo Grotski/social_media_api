@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "debug_toolbar",
+    "social_django",
     "user",
     "social_media_app",
 ]
