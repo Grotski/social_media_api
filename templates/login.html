@@ -7,7 +7,7 @@
         <div>
             <h2 class="mt-6 text-center text-2xl font-extrabold text-gray-900">Login</h2>
         </div>
-        <form method="post" class="mt-8 space-y-6">
+        <form id="login-form" method="post" class="mt-8 space-y-6">
             {% csrf_token %}
 
             <div class="rounded-md shadow-sm -space-y-px">
@@ -34,6 +34,37 @@
                 </button>
             </div>
         </form>
+        <div id="result" style="margin-top: 20px;"></div>
     </div>
 </div>
+
+<script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("{{ form.email.id_for_label }}").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch("/api/user/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = document.getElementById("result");
+
+      if (response.ok) {
+        const data = await response.json();
+        result.innerHTML = `<strong>Access Token:</strong><br><code>${data.access}</code><br><br><strong>Refresh Token:</strong><br><code>${data.refresh}</code>`;
+
+        // Optionally: store the token
+        // localStorage.setItem("access_token", data.access);
+      } else {
+        const error = await response.json();
+        result.innerHTML = `<span style="color: red;">Login failed: ${error.detail || "Invalid credentials"}</span>`;
+      }
+    });
+</script>
 {% endblock %}
