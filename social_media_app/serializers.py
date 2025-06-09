@@ -81,7 +81,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "title", "content", "profile", "created_at"]
+        fields = ["id", "title", "content", "created_at"]
 
 
 class PostListSerializer(PostSerializer):
@@ -91,7 +91,7 @@ class PostListSerializer(PostSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "title", "profile_full_name", "media", "ceated_at"]
+        fields = ["id", "title", "profile_full_name", "media", "created_at"]
 
 
 class PostDetailSerializer(PostSerializer):
@@ -108,7 +108,6 @@ class PostDetailSerializer(PostSerializer):
             "id",
             "title",
             "content",
-            "total_likes",
             "profile_username",
             "profile_full_name",
             "media",

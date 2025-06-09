@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "social_django",
     "user",
-    "social_media_app",
+    "social_media_app.apps.SocialMediaAppConfig",
 ]
 
 MIDDLEWARE = [

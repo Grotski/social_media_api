@@ -43,7 +43,7 @@
       e.preventDefault();
 
       const email = document.getElementById("{{ form.email.id_for_label }}").value;
-      const password = document.getElementById("password").value;
+      const password = document.getElementById("{{ form.password.id_for_label }}").value;
 
       const response = await fetch("/api/user/login/", {
         method: "POST",

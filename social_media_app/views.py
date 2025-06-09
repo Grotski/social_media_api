@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -25,6 +26,12 @@ from .serializers import (
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
+class ChatViewSet(viewsets.ModelViewSet):
+
+    def get(request, recipient_username):
+        return render(request, "chat.html", {"recipient_username": recipient_username})
+
+
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowListSerializer
@@ -44,7 +51,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAdminOrIfAuthenticatedReadOnly,
     ]
-    
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -57,9 +63,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [
-        IsAdminOrIfAuthenticatedReadOnly,
-    ]
+    # permission_classes = [
+    #     IsAdminOrIfAuthenticatedReadOnly,
+    # ]
 
     def get_queryset(self):
         title_param = self.request.query_params.get("title")
@@ -73,6 +79,9 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
             queryset = queryset.filter(profile__username=profile_username)
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save(profile=self.request.user.profile)
+
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer
@@ -81,6 +90,7 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
         if self.action == "upload_image":
             return PostImageSerializer
         return PostDetailSerializer
+    
 
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
     def toggle_like_unlike(self, request, pk=None):
@@ -96,9 +106,9 @@ class PostViewSet(UploadImageMixin, viewsets.ModelViewSet):
 class ProfileViewSet(UploadImageMixin, viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileDetailSerializer
-    permission_classes = [
-        IsAdminOrIfAuthenticatedReadOnly,
-    ]
+    # permission_classes = [
+    #     IsAdminOrIfAuthenticatedReadOnly,
+    # ]
 
     def get_queryset(self):
         username_param = self.request.query_params.get("username")

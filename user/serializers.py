@@ -26,7 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("password2")
-        return get_user_model().objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(email=validated_data["email"], username=validated_data["username"], password=validated_data["password"])
+        return user
 
     def update(self, instance, validated_data):
         password = validated_data.pop("password", None)
@@ -44,18 +45,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "email"
 
     def validate(self, attrs):
-        email = attrs.get("email")
-        password = attrs.get("password")
-
-        user = authenticate(username=email, password=password)
-        if not user:
-            raise serializers.ValidationError("Invalid email or password")
 
         data = super().validate(attrs)
         data["user"] = {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
+            "id": self.user.id,
+            "username": self.user.username,
+            "email": self.user.email,
         }
         return data
 
