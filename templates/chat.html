@@ -23,10 +23,11 @@
 </div>
 
 <script>
-    const username = "{{ recipient_username }}";
+    {% comment %} const username = "{{ recipient_username }}";
     const chatSocket = new WebSocket(
         'ws://' + window.location.host + '/ws/chat/' + username + '/'
-    );
+    ); {% endcomment %}
+    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/{{ recipient_username }}/');
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
@@ -52,9 +53,9 @@
         chatBox.scrollTop = chatBox.scrollHeight;
     };
 
-    document.querySelector('#chat-message-submit').addEventListener('keyup', function (e) {
+    document.querySelector('#chat-input').addEventListener('keyup', function (e) {
         if (e.key === 'Enter') {
-            const messageInput = document.querySelector('#chat-message-submit');
+            const messageInput = document.querySelector('#chat-input');
             const message = messageInput.value;
             chatSocket.send(JSON.stringify({
                 'message': message

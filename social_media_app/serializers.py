@@ -2,7 +2,7 @@ from social_media_app.models import Post, Profile, Comment, Message, Follow
 from rest_framework import serializers
 
 
-class MessageListSerializer(serializers.ModelSerializer):
+class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ["id", "content", "created_at"]
@@ -91,7 +91,7 @@ class PostListSerializer(PostSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "title", "profile_full_name", "media", "created_at"]
+        fields = ["id", "title", "profile_full_name", "media"]
 
 
 class PostDetailSerializer(PostSerializer):

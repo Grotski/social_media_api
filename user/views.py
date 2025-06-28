@@ -20,8 +20,6 @@ class CreateUserView(CreateView):
     template_name = "register.html"
     success_url = reverse_lazy("user:login_user")
     serializer_class = UserSerializer
-    # serializer_class = UserSerializer
-    # success_url = reverse_lazy("user:login_user")
 
     # def get(self, request):
     #     form = UserRegisterForm()

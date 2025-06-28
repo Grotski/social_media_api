@@ -26,6 +26,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+from social_media_app.routing import websocket_urlpatterns
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -46,4 +48,4 @@ urlpatterns = [
         name="redoc",
     ),
     path("__debug__/", include("debug_toolbar.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + websocket_urlpatterns

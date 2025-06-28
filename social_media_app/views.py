@@ -4,6 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from django.views.generic import TemplateView
 
 from .mixins import UploadImageMixin
 
@@ -26,18 +27,19 @@ from .serializers import (
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
-class ChatViewSet(viewsets.ModelViewSet):
-
-    def get(request, recipient_username):
-        return render(request, "chat.html", {"recipient_username": recipient_username})
+# class ChatViewSet(TemplateView):
+#     template_view = "chat.html"
+    
+def chat_view(request, recipient_username):
+    return render(request, "chat.html", {"recipient_username": recipient_username})
 
 
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowListSerializer
-    permission_classes = [
-        IsAdminOrIfAuthenticatedReadOnly,
-    ]
+    # permission_classes = [
+    #     IsAdminOrIfAuthenticatedReadOnly,
+    # ]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -48,9 +50,9 @@ class FollowViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [
-        IsAdminOrIfAuthenticatedReadOnly,
-    ]
+    # permission_classes = [
+    #     IsAdminOrIfAuthenticatedReadOnly,
+    # ]
 
     def get_serializer_class(self):
         if self.action == "list":
